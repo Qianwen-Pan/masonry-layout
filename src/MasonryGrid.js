@@ -5,7 +5,7 @@ import Masonry from "react-masonry-css";
 
 function MasonryGrid() {
   const [pins, setPins] = useState([]);
-  
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -16,6 +16,14 @@ function MasonryGrid() {
     fetchData();
   }, []);
 
+  function handleFilterChange(event) {
+    setFilter(event.target.value);
+  }
+
+  const filteredPins = pins.filter(pin =>
+    pin.title.toLowerCase().includes(filter.toLowerCase())
+  );
+
   const breakpointColumnsObj = {
     default: 4,
     1100: 3,
@@ -25,17 +33,20 @@ function MasonryGrid() {
 
 
   return (
+    <>
+    <input type="text" value={filter} onChange={handleFilterChange} placeholder="Filter..." />
     <Masonry
         breakpointCols={breakpointColumnsObj}
         className="my-masonry-grid"
         columnClassName="my-masonry-grid_column">
-        {pins.map((pin) => (
+        {filteredPins.map((pin) => (
           <div key={pin.id}>
             <img src={pin.image} alt={pin.title} />
             <p>{pin.title}</p>
           </div>
         ))}
       </Masonry>
+      </>
   );
 }
 export default MasonryGrid;
